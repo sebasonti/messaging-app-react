@@ -2,6 +2,7 @@ const io = require('socket.io')(5000);
 
 io.on('connection', socket => {
     const id = socket.handshake.query.id;
+    console.log(`${id} has logged in`);
     socket.join(id);
 
     socket.on('send-message', ({ recipients, text }) => {
@@ -12,5 +13,5 @@ io.on('connection', socket => {
                 recipients: newRecipients, sender: id, text
             });
         });
-    })
+    });
 });

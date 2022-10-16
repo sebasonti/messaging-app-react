@@ -1,7 +1,7 @@
 import React from "react";
 import ContactsProvider from "../contexts/ContactsProvider";
 import ConversationsProvider from "../contexts/ConversationProvider";
-import { SocketProvider } from "../contexts/SocketProvider";
+import SocketProvider from "../contexts/SocketProvider";
 import useLocalStorage from "../hooks/useLocalStorage";
 import Dashboard from "./Dashboard";
 import Login from "./Login"

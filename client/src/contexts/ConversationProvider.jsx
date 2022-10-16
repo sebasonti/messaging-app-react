@@ -15,41 +15,17 @@ export default function ConversationsProvider({ id, children }) {
         "conversations",
         []
     );
-    const [selectedConversationIndex, setSelectedConversationIndex] = useState(
-        0
-    );
+    const [selectedConversationIndex, setSelectedConversationIndex] =
+        useState(0);
     const { contacts } = useContacts();
-    const { socket } = useSocket();
+    const socket = useSocket();
 
     function createConversation(recipients) {
         setConversations((prev) => [...prev, { recipients, messages: [] }]);
     }
 
-    const formattedConversations = conversations.map((conversation, index) => {
-        const recipients = conversation.recipients.map((recipient) => {
-            const contact = contacts.find(
-                (contact) => contact.id === recipient
-            );
-            const name = (contact && contact.name) || recipient;
-            return { id: recipient, name };
-        });
-        const messages = conversation.messages.map((message) => {
-            const contact = contacts.find(
-                (contact) => contact.id === message.sender
-            );
-            const name = (contact && contact.name) || message.sender;
-            const fromMe = id === message.sender;
-            return { ...message, senderName: name, fromMe };
-        });
-        const selected = index === selectedConversationIndex;
-        return { ...conversation, messages, recipients, selected };
-    });
-
     const addMessageToConversation = useCallback(
         ({ recipients, text, sender }) => {
-            const selectedConversation =
-                formattedConversations[selectedConversationIndex];
-            selectedConversation.messages.push(text);
             setConversations((prevConversations) => {
                 let madeChange = false;
                 const newMessage = { sender, text };
@@ -81,7 +57,7 @@ export default function ConversationsProvider({ id, children }) {
                 }
             });
         },
-        []
+        [setConversations]
     );
 
     useEffect(() => {
@@ -97,6 +73,26 @@ export default function ConversationsProvider({ id, children }) {
 
         addMessageToConversation({ recipients, text, sender: id });
     }
+
+    const formattedConversations = conversations.map((conversation, index) => {
+        const recipients = conversation.recipients.map((recipient) => {
+            const contact = contacts.find(
+                (contact) => contact.id === recipient
+            );
+            const name = (contact && contact.name) || recipient;
+            return { id: recipient, name };
+        });
+        const messages = conversation.messages.map((message) => {
+            const contact = contacts.find(
+                (contact) => contact.id === message.sender
+            );
+            const name = (contact && contact.name) || message.sender;
+            const fromMe = id === message.sender;
+            return { ...message, senderName: name, fromMe };
+        });
+        const selected = index === selectedConversationIndex;
+        return { ...conversation, messages, recipients, selected };
+    });
 
     const value = {
         conversations: formattedConversations,
