@@ -11,16 +11,10 @@ export default function SocketProvider({ id, children }) {
     const [socket, setSocket] = useState();
 
     useEffect(() => {
-        let newSocket;
-        if (id) {
-            newSocket = io("http://localhost:5000", { query: { id } });
-            console.log(newSocket);
-            setSocket(newSocket);
-        }
+        const newSocket = io("http://localhost:5000", { query: { id } });
+        setSocket(newSocket);
 
-        return () => {
-            if (newSocket) newSocket.close();
-        };
+        return () => newSocket.close();
     }, [id]);
 
     return (
